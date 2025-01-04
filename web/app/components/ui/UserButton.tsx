@@ -1,4 +1,4 @@
-import { Link } from "@remix-run/react";
+import Link from "next/link";
 import Popup from "../shared/Popup";
 
 export default function UserButton() {
@@ -10,7 +10,7 @@ export default function UserButton() {
 
       <Popup>
         <div className="">
-          <Link to="/dashboard/settings/account">Settings</Link>
+          <Link href="/dashboard/settings/account">Settings</Link>
         </div>
       </Popup>
     </div>
