@@ -7,12 +7,16 @@ export default [
   route("signup", "routes/auth/SignupPage.tsx"),
   route("terms", "routes/legal/TosPage.tsx"),
   route("privacy", "routes/legal/PrivacyPolicyPage.tsx"),
+  route("about", "routes/AboutPage.tsx"),
+  route("support", "routes/support/SupportPage.tsx"),
+  route("demo", "routes/demo/DemoPage.tsx"),
 
   route("dashboard", "routes/dashboard/layout.tsx", [
     index("routes/dashboard/index.tsx"),
     route("settings", "routes/dashboard/settings/SettingsPage.tsx"),
+    route("accounts", "routes/dashboard/accounts/AccountsPage.tsx"),
+    route("accounts/:id", "routes/dashboard/accounts/AccountPage.tsx"),
+    route("transactions", "routes/dashboard/transactions/TransactionsPage.tsx"),
+    route("budget", "routes/dashboard/budget/BudgetPage.tsx"),
   ]),
-
-  route("support", "routes/support/SupportPage.tsx"),
-  route("demo", "routes/demo/DemoPage.tsx"),
 ] satisfies RouteConfig;

@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import type { Route } from "./+types/HomePage";
 
 export function meta({}: Route.MetaArgs) {
@@ -31,7 +32,9 @@ export default function Home() {
 
         <NavBar />
         <div>
-          <div>Signin</div>
+          <Link className="" to="/signin">
+            Signin
+          </Link>
         </div>
       </header>
 
@@ -47,8 +50,13 @@ export default function Home() {
           <div className="">
             <h3 className="pb-4 font-bold">Company</h3>
 
-            <div className="">About</div>
-            <div className="">Support</div>
+            <div className="flex flex-col flex-nowrap gap-2">
+              <Link to="/about">About</Link>
+              <Link to="/support">Support</Link>
+              <Link className="" to="/terms">
+                Terms Of Services
+              </Link>
+            </div>
           </div>
         </div>
       </footer>
