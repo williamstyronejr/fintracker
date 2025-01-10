@@ -1,4 +1,5 @@
 import { NavLink, Outlet } from "react-router";
+import UserButton from "~/components/UserButton";
 
 export default function DashboardLayout() {
   return (
@@ -161,7 +162,9 @@ export default function DashboardLayout() {
           </ul>
         </nav>
 
-        <div className="px-4">{/* <UserButton /> */}</div>
+        <div className="w-full px-1">
+          <UserButton />
+        </div>
       </header>
 
       <div className="grow px-4 py-6">
