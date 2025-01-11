@@ -41,8 +41,6 @@ export default function TransactionTable({ data }: { data: Promise<any[]> }) {
 
   return (
     <div>
-      <h3 className="font-semibold">Transactions</h3>
-
       <div>
         <DataTable columns={columns} data={initialTransactions} />
       </div>
