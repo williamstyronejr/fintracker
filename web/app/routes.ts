@@ -16,6 +16,10 @@ export default [
     route("settings", "routes/dashboard/settings/SettingsPage.tsx"),
     route("accounts", "routes/dashboard/accounts/AccountsPage.tsx"),
     route("accounts/:id", "routes/dashboard/accounts/AccountPage.tsx"),
+    route(
+      "accounts/:id/settings",
+      "routes/dashboard/accounts/AccountSettingsPage.tsx"
+    ),
     route("transactions", "routes/dashboard/transactions/TransactionsPage.tsx"),
     route("budget", "routes/dashboard/budget/BudgetPage.tsx"),
   ]),
