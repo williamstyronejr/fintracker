@@ -162,6 +162,10 @@ export default function DashboardLayout() {
           </ul>
         </nav>
 
+        <div>
+          <NavLink to="/dashboard/settings">Settings</NavLink>
+        </div>
+
         <div className="w-full px-1">
           <UserButton />
         </div>
