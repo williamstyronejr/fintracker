@@ -11,7 +11,7 @@ export default function UserButton() {
       <DropdownMenuTrigger className="w-full px-2 group  py-2 ">
         <div className="flex flex-row flex-nowrap items-center ">
           <img
-            src="/public/imgs/defaultProfile.jpg"
+            src="/imgs/defaultProfile.jpg"
             alt="User Profile"
             className="rounded-md w-6 h-6 shrink-0"
           />
