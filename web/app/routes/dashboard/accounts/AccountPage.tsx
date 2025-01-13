@@ -87,9 +87,10 @@ export default function AccountPage({ loaderData }: Route.ComponentProps) {
 
           <div className="flex flex-col flex-nowrap">
             {schedulePayments.map((payment) => (
-              <div
+              <Link
                 className="flex flex-row flex-nowrap"
                 key={`schedule-payments-${payment.id}`}
+                to={`/dashboard/transactions/${payment.id}`}
               >
                 <div className="grow">
                   <div>{payment.title}</div>
@@ -103,7 +104,7 @@ export default function AccountPage({ loaderData }: Route.ComponentProps) {
                 </div>
 
                 <div className="">{payment.amount}</div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
