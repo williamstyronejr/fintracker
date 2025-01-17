@@ -1,5 +1,11 @@
 import { Link } from "react-router";
 import type { Route } from "./+types/HomePage";
+import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  UserButton,
+} from "@clerk/react-router";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -12,11 +18,17 @@ function NavBar() {
   return (
     <nav className="">
       <ul>
-        <li>Features</li>
+        <SignedOut>
+          <li>Features</li>
 
-        <li>Demo</li>
+          <li>Demo</li>
 
-        <li></li>
+          <li></li>
+        </SignedOut>
+
+        <SignedIn>
+          <li>Dashboard</li>
+        </SignedIn>
       </ul>
     </nav>
   );
@@ -31,11 +43,14 @@ export default function Home() {
         </div>
 
         <NavBar />
-        <div>
-          <Link className="" to="/signin">
-            Signin
-          </Link>
-        </div>
+
+        <SignedOut>
+          <SignInButton />
+        </SignedOut>
+
+        <SignedIn>
+          <UserButton />
+        </SignedIn>
       </header>
 
       <div></div>
