@@ -1,5 +1,16 @@
-import { NavLink, Outlet } from "react-router";
+import { SignedIn, SignedOut } from "@clerk/react-router";
+import { getAuth } from "@clerk/react-router/ssr.server";
+import { Navigate, NavLink, Outlet, redirect } from "react-router";
 import UserButton from "~/components/UserButton";
+import type { Route } from "./+types/layout";
+
+export async function loader(args: Route.LoaderArgs) {
+  const user = await getAuth(args);
+
+  if (!user.userId) return redirect("/signin");
+
+  return;
+}
 
 export default function DashboardLayout() {
   return (
