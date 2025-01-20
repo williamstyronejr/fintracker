@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { Link, NavLink } from "react-router";
 import type { Route } from "./+types/HomePage";
 import {
   SignedIn,
@@ -16,21 +16,25 @@ export function meta({}: Route.MetaArgs) {
 
 function NavBar() {
   return (
-    <nav className="">
-      <ul>
-        <SignedOut>
-          <li>Features</li>
+    <>
+      <nav className="">
+        <ul>
+          <SignedOut>
+            <li>Features</li>
 
-          <li>Demo</li>
+            <li>Demo</li>
 
-          <li></li>
-        </SignedOut>
+            <li></li>
+          </SignedOut>
 
-        <SignedIn>
-          <li>Dashboard</li>
-        </SignedIn>
-      </ul>
-    </nav>
+          <SignedIn>
+            <li>
+              <NavLink to="/dashboard">Dashboard</NavLink>
+            </li>
+          </SignedIn>
+        </ul>
+      </nav>
+    </>
   );
 }
 

@@ -1,12 +1,12 @@
 import { Suspense } from "react";
 import type { Route } from "./+types/index";
 import { Link } from "react-router";
-import { formatCost } from "~/util";
 import TransactionTable, {
   TransactionTableFallback,
 } from "~/components/TransactionTable";
 import NewBudgetPlan from "~/components/NewBudgetPlan";
 import MonthlyChart from "~/components/MonthlyChart";
+import { formatCost } from "~/util";
 
 export async function loader({}: Route.LoaderArgs) {
   return {
