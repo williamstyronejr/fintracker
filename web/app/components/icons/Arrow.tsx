@@ -1,5 +1,5 @@
 export default function Arrow({
-  className = "w-6 h-6 ",
+  className = "w-6 h-6 stroke-black ",
 }: {
   className?: string;
 }) {
