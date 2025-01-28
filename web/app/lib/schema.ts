@@ -12,14 +12,14 @@ export const transactionTypeEnum = pgEnum("type", ["payment", "income"]);
 export const Transactions = pgTable("transactions", {
   id: uuid().primaryKey().defaultRandom(),
   title: text("title").notNull(),
-  amount: numeric("amount", { precision: 10, scale: 4 }).default("0"),
+  amount: numeric("amount", { precision: 10, scale: 4 }).notNull().default("0"),
   type: transactionTypeEnum(),
   userId: text("user_id").notNull(),
   accountId: uuid("account_id")
     .notNull()
     .references(() => Accounts.id),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
 export const Accounts = pgTable("accounts", {
