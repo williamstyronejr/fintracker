@@ -18,6 +18,8 @@ export default [
 
   ...prefix("api", [
     route("/transactions/create", "routes/api/transactions/create.tsx"),
+    route("/transactions/:id/edit", "routes/api/transactions/edit.ts"),
+    route("/transactions/:id/delete", "routes/api/transactions/delete.ts"),
   ]),
 
   route("dashboard", "routes/dashboard/layout.tsx", [
