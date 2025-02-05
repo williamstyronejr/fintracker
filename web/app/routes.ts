@@ -17,11 +17,14 @@ export default [
   route("demo", "routes/demo/DemoPage.tsx"),
 
   ...prefix("api", [
-    route("/account/create", "routes/api/account/create.ts"),
-    route(
-      "/account/transaction/delete",
-      "routes/api/account/delete-transactions.ts"
-    ),
+    ...prefix("account", [
+      route("/:id/delete", "routes/api/account/delete.ts"),
+      route("create", "routes/api/account/create.ts"),
+      route(
+        "/:id/transactions/delete",
+        "routes/api/account/delete-transactions.ts"
+      ),
+    ]),
 
     route("/transactions/create", "routes/api/transactions/create.tsx"),
     route("/transactions/:id/edit", "routes/api/transactions/edit.ts"),
