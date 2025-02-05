@@ -7,22 +7,31 @@ export default function FormModal({
   action,
   method = "post",
   children,
+  button,
+  className = "",
 }: {
   action: string;
   method?: "post" | "get";
   children: ReactNode;
+  button: string;
+  className?: string;
 }) {
   const [visible, setVisible] = useState(false);
   const fetcher = useFetcher();
 
   useEffect(() => {
-    if (fetcher.data) setVisible(false);
+    // data === undefined by default, but server can return null
+    if (fetcher.data !== undefined) setVisible(false);
   }, [fetcher.data]);
 
   return (
     <Dialog open={visible} onOpenChange={() => setVisible((old) => !old)}>
-      <button type="button" onClick={() => setVisible((old) => !old)}>
-        <Add />
+      <button
+        className={className}
+        type="button"
+        onClick={() => setVisible((old) => !old)}
+      >
+        {button}
       </button>
 
       <DialogContent>
