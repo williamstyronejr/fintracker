@@ -9,8 +9,8 @@ import {
 } from "@radix-ui/react-dropdown-menu";
 import CogWheel from "~/components/icons/CogWheel";
 import Trash from "~/components/icons/Trash";
-import Edit from "~/components/icons/Edit";
-import ConfirmButton from "~/components/ConfirmButton";
+// import Edit from "~/components/icons/Edit";
+// import ConfirmButton from "~/components/ConfirmButton";
 import { data, Link, useFetcher } from "react-router";
 import { eq } from "drizzle-orm";
 import { Transactions } from "~/lib/schema";
@@ -122,7 +122,7 @@ export default function TransactionPage({ loaderData }: Route.ComponentProps) {
                 onClick={() => setEditing((old) => !old)}
                 className="flex flex-row flex-nowrap items-center hover:cursor-pointer hover:bg-slate-400/10 px-2"
               >
-                <Edit className="w-5 h-5" />
+                {/* <Edit className="w-5 h-5" /> */}
                 <div className="ml-2">Edit</div>
               </button>
             </DropdownMenuItem>
