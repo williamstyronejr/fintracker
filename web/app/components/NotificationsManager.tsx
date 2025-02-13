@@ -2,7 +2,6 @@ import { useNotificationContext } from "~/hooks/NotificationContext";
 
 export default function NotificationsManager() {
   const { state, removeNotification } = useNotificationContext();
-  console.log(state);
 
   return (
     <div className="sticky top-0 left-0 w-full h-full">
