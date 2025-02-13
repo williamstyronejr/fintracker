@@ -24,6 +24,9 @@ export default [
         "/:id/transactions/delete",
         "routes/api/account/delete-transactions.ts"
       ),
+      route("/:id/export", "routes/api/account/data.ts"),
+      route("/:id/share", "routes/api/account/shareable.ts"),
+      route("/:id/edit", "routes/api/account/edit.ts"),
     ]),
 
     route("/transactions/create", "routes/api/transactions/create.tsx"),
