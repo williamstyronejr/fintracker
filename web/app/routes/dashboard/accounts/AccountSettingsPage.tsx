@@ -15,8 +15,8 @@ import { useEffect } from "react";
 import { useNotificationContext } from "~/hooks/NotificationContext";
 import { getAuth } from "@clerk/react-router/ssr.server";
 import { db } from "~/lib/db";
-import { Accounts } from "~/lib/schema";
-import { eq } from "drizzle-orm";
+import { Accounts, PublicLinks } from "~/lib/schema";
+import { and, eq } from "drizzle-orm";
 
 export async function loader(args: Route.LoaderArgs) {
   const user = await getAuth(args);
@@ -25,11 +25,18 @@ export async function loader(args: Route.LoaderArgs) {
   // TODO: make sure user is verified
 
   try {
-    const account = await db.query.Accounts.findFirst({
-      where: eq(Accounts.id, id),
-    });
+    const [account, publicLink] = await Promise.all([
+      db.query.Accounts.findFirst({
+        where: eq(Accounts.id, id),
+      }),
+      db.query.PublicLinks.findFirst({
+        where: and(eq(PublicLinks.accountId, id), eq(PublicLinks.active, true)),
+      }),
+    ]);
 
-    return { account };
+    const link = publicLink ? `/a/${publicLink.id}` : publicLink;
+
+    return { account, link };
   } catch (err) {
     // TODO: handle account not existing
     return {};
@@ -92,12 +99,71 @@ function EditAccount({
   );
 }
 
+function CreateShareable({
+  id,
+  existingLink,
+}: {
+  id: string;
+  existingLink?: string;
+}) {
+  const fetcher = useFetcher();
+
+  useEffect(() => {
+    if (fetcher.data !== undefined) {
+    }
+  }, [fetcher.data]);
+
+  return (
+    <div className="border border-slate-300 rounded-md shadow-lg">
+      <fetcher.Form action={`/api/account/${id}/share`} method="post">
+        <div className="px-4 py-4">
+          <h3 className="font-bold text-2xl py-2 text-black">Shareable Link</h3>
+          <div>
+            Creates a public link for this account. Please note that your
+            previous link will be deleted.
+          </div>
+
+          <div className="pt-4">
+            {existingLink ? (
+              <div className="flex flex-row flex-nowrap items-center border border-slate-300 rounded px-4 py-2">
+                <div className="grow mr-4">{existingLink}</div>
+
+                <button
+                  className="px-2 py-1 bg-black hover:bg-slate-700 text-white rounded-md transition-colors"
+                  type="button"
+                  onClick={() => navigator.clipboard.writeText(existingLink)}
+                >
+                  Copy
+                </button>
+              </div>
+            ) : (
+              <div className="border border-slate-300 rounded px-4 py-2 text-slate-500">
+                No Current Link
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="bg-slate-100 px-4 text-right py-2">
+          <button
+            className="px-2 py-1 bg-black hover:bg-slate-700 text-white rounded-md transition-colors "
+            type="submit"
+            disabled={fetcher.state !== "idle"}
+          >
+            Create Link
+          </button>
+        </div>
+      </fetcher.Form>
+    </div>
+  );
+}
+
 export default function AccountSettingsPage({
   params,
   loaderData,
 }: Route.ComponentProps) {
   const { id } = params;
-  const { account } = loaderData;
+  const { account, link } = loaderData;
 
   return (
     <div>
@@ -152,27 +218,7 @@ export default function AccountSettingsPage({
           </div>
         </div>
 
-        <div className="border border-slate-300 rounded-md shadow-lg">
-          <div className="px-4 py-4">
-            <h3 className="font-bold text-2xl py-2 text-black">
-              Shareable Link
-            </h3>
-            <div>
-              Creates a sharable link for this account. Note that all
-              transaction on this account and transfers made to this account
-              will be visible.
-            </div>
-          </div>
-
-          <div className="bg-slate-100 px-4 text-right py-2">
-            <button
-              className="px-2 py-1 bg-black hover:bg-slate-700 text-white rounded-md transition-colors "
-              type="button"
-            >
-              Create Link
-            </button>
-          </div>
-        </div>
+        <CreateShareable id={id} existingLink={link} />
 
         <div className="border border-slate-300 rounded-md shadow-lg">
           <div className="px-4 py-4">
