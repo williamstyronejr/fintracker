@@ -1,8 +1,10 @@
 import { getAuth } from "@clerk/react-router/ssr.server";
-import type { Route } from "./+types/shareable";
-import { db } from "~/lib/db";
-import { PublicLinks } from "~/lib/schema";
 import { data } from "react-router";
+import { eq } from "drizzle-orm";
+import { PublicLinks } from "~/lib/schema";
+import { db } from "~/lib/db";
+
+import type { Route } from "./+types/shareable";
 
 export async function action(args: Route.ActionArgs) {
   const user = await getAuth(args);
@@ -11,6 +13,11 @@ export async function action(args: Route.ActionArgs) {
   // TODO: Verift user
 
   try {
+    await db
+      .update(PublicLinks)
+      .set({ active: false })
+      .where(eq(PublicLinks.accountId, id));
+
     const link = await db
       .insert(PublicLinks)
       .values({
