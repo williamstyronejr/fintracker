@@ -5,6 +5,7 @@ import {
   text,
   pgEnum,
   numeric,
+  boolean,
 } from "drizzle-orm/pg-core";
 
 export const transactionTypeEnum = pgEnum("type", ["payment", "income"]);
@@ -37,6 +38,7 @@ export const PublicLinks = pgTable("public_links", {
   accountId: uuid("account_id")
     .notNull()
     .references(() => Accounts.id),
+  active: boolean().default(true),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
