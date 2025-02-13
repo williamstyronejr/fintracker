@@ -11,6 +11,8 @@ import { ClerkProvider } from "@clerk/react-router";
 
 import type { Route } from "./+types/root";
 import stylesheet from "./app.css?url";
+import { NotificationProvider } from "./hooks/NotificationContext";
+import NotificationsManager from "./components/NotificationsManager";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -55,7 +57,10 @@ export default function App({ loaderData }: Route.ComponentProps) {
       signUpFallbackRedirectUrl="/dashboard"
       signInFallbackRedirectUrl="/dashboard"
     >
-      <Outlet />
+      <NotificationProvider>
+        <NotificationsManager />
+        <Outlet />
+      </NotificationProvider>
     </ClerkProvider>
   );
 }
