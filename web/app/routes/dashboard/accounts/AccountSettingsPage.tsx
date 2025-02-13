@@ -1,23 +1,110 @@
 import type React from "react";
-import { Link } from "react-router";
+import { Link, useFetcher } from "react-router";
 import type { Route } from "./+types/AccountSettingsPage";
 import Input from "~/components/Input";
-import { Select } from "~/components/ui/select";
 import {
+  Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@radix-ui/react-select";
+} from "~/components/ui/select";
+import ConfirmationButton from "~/components/ConfirmationButton";
+import FormModal from "~/components/FormModal";
+import { useEffect } from "react";
+import { useNotificationContext } from "~/hooks/NotificationContext";
+import { getAuth } from "@clerk/react-router/ssr.server";
+import { db } from "~/lib/db";
+import { Accounts } from "~/lib/schema";
+import { eq } from "drizzle-orm";
 
-export default function AccountSettingsPage({ params }: Route.ComponentProps) {
+export async function loader(args: Route.LoaderArgs) {
+  const user = await getAuth(args);
+  const { id } = args.params;
+
+  // TODO: make sure user is verified
+
+  try {
+    const account = await db.query.Accounts.findFirst({
+      where: eq(Accounts.id, id),
+    });
+
+    return { account };
+  } catch (err) {
+    // TODO: handle account not existing
+    return {};
+  }
+}
+
+function EditAccount({
+  id,
+  initTitle,
+  initNickname,
+}: {
+  id: string;
+  initTitle: string;
+  initNickname: string;
+}) {
+  const fetcher = useFetcher();
+  const { addNotification } = useNotificationContext();
+
+  useEffect(() => {
+    if (fetcher.data !== undefined) addNotification("Successfully created");
+  }, [fetcher.data]);
+
+  return (
+    <div className="border border-slate-300 rounded-md shadow-lg">
+      <fetcher.Form action={`/api/account/${id}/edit`} method="POST">
+        <div className="px-4 py-4">
+          <h3 className="font-bold text-2xl py-2 text-black">Edit Name</h3>
+          <div>Edit the name and nickname of your account.</div>
+
+          <div className="py-2">
+            <Input
+              type="text"
+              name="title"
+              placeholder="Account Name"
+              label="Account Name"
+              initialValue={initTitle}
+            />
+
+            <Input
+              type="text"
+              name="nickname"
+              placeholder="Account Nickname"
+              label="Nickname"
+              initialValue={initNickname}
+            />
+          </div>
+        </div>
+
+        <div className="bg-slate-100 px-4 text-right py-2">
+          <button
+            className="px-2 py-1 bg-black hover:bg-slate-700 text-white rounded-md transition-colors "
+            type="submit"
+            disabled={fetcher.state !== "idle"}
+          >
+            Save
+          </button>
+        </div>
+      </fetcher.Form>
+    </div>
+  );
+}
+
+export default function AccountSettingsPage({
+  params,
+  loaderData,
+}: Route.ComponentProps) {
   const { id } = params;
+  const { account } = loaderData;
+
   return (
     <div>
       <div>
         <Link
           className="text-sm text-slate-500 hover:text-black"
-          to={"/dashboard/accounts/${id}"}
+          to={`/dashboard/accounts/${id}`}
         >
           Go Back
         </Link>
@@ -26,37 +113,11 @@ export default function AccountSettingsPage({ params }: Route.ComponentProps) {
       </div>
 
       <div className="flex flex-col gap-8">
-        <div className="border border-slate-300 rounded-md shadow-lg">
-          <div className="px-4 py-4">
-            <h3 className="font-bold text-2xl py-2 text-black">Edit Name</h3>
-            <div>Edit the name and nickname of your account.</div>
-
-            <div className="py-2">
-              <Input
-                type="text"
-                name="name"
-                placeholder="Account Name"
-                label="Account Name"
-              />
-
-              <Input
-                type="text"
-                name="nickname"
-                placeholder="Account Nickname"
-                label="Nickname"
-              />
-            </div>
-          </div>
-
-          <div className="bg-slate-100 px-4 text-right py-2">
-            <button
-              className="px-2 py-1 bg-black hover:bg-slate-700 text-white rounded-md transition-colors "
-              type="button"
-            >
-              Save
-            </button>
-          </div>
-        </div>
+        <EditAccount
+          id={id}
+          initTitle={account?.title}
+          initNickname={account?.nickname}
+        />
 
         <div className="border border-slate-300 rounded-md shadow-lg">
           <div className="px-4 py-4">
@@ -121,26 +182,39 @@ export default function AccountSettingsPage({ params }: Route.ComponentProps) {
             <div>Delete transactions within a specific range of time.</div>
           </div>
 
-          <div className="flex flex-row flex-nowrap justify-between bg-red-100/40 px-4 text-right py-2">
-            <Select>
-              <SelectTrigger className="w-[280-px]">
-                <SelectValue placeholder="Time From Today" />
-              </SelectTrigger>
-
-              <SelectContent>
-                <SelectItem value="csv">24 Hours</SelectItem>
-                <SelectItem value="json">30 Days</SelectItem>
-                <SelectItem value="pdf">1 Year</SelectItem>
-                <SelectItem value="pdf">All</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <button
+          <div className="flex flex-row flex-nowrap justify-end bg-red-100/40 px-4 text-right py-2">
+            <FormModal
+              button="Delete Transaction"
+              action={`/api/account/${id}/transactions/delete`}
               className="px-2 py-1 bg-red-500 hover:bg-red-700 text-white rounded-md transition-colors "
-              type="button"
             >
-              Delete Transactions
-            </button>
+              <div>
+                <div className="text-lg font-semibold">Select Time Frame</div>
+
+                <Select name="time">
+                  <SelectTrigger className="w-[280-px]">
+                    <SelectValue placeholder="Time From Today" />
+                  </SelectTrigger>
+
+                  <SelectContent>
+                    <SelectItem value="1">24 Hours</SelectItem>
+                    <SelectItem value="7">7 Days</SelectItem>
+                    <SelectItem value="30">30 Days</SelectItem>
+                    <SelectItem value="365">1 Year</SelectItem>
+                    <SelectItem value="all">All</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className=" py-2 text-right">
+                <button
+                  className="border rounded-md bg-black text-white hover:bg-slate-700 px-4 py-1"
+                  type="submit"
+                >
+                  Submit
+                </button>
+              </div>
+            </FormModal>
           </div>
         </div>
 
@@ -156,12 +230,14 @@ export default function AccountSettingsPage({ params }: Route.ComponentProps) {
           </div>
 
           <div className="bg-red-100/40 px-4 text-right py-2">
-            <button
-              className="px-2 py-1 bg-red-500 hover:bg-red-700 text-white rounded-md transition-colors "
-              type="button"
+            <ConfirmationButton
+              action={`/api/account/${id}/delete`}
+              confirmText={`Are you sure you want to delete this account. All data related to this account will also be deleted.`}
             >
-              Delete Account
-            </button>
+              <div className="px-2 py-1 bg-red-500 hover:bg-red-700 text-white rounded-md transition-colors ">
+                Delete Account
+              </div>
+            </ConfirmationButton>
           </div>
         </div>
       </div>
