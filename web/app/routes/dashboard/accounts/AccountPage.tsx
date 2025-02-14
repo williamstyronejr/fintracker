@@ -16,17 +16,12 @@ import { Accounts, Transactions } from "~/lib/schema";
 import { eq } from "drizzle-orm";
 import { Dialog, DialogContent, DialogTrigger } from "~/components/ui/dialog";
 import Input from "~/components/Input";
+import CreateTransaction from "~/components/CreateTransaction";
 
 export async function loader({ params }: Route.LoaderArgs) {
   const account = await db.query.Accounts.findFirst({
     where: eq(Accounts.id, params.id),
   });
-
-  // const account = {
-  //   id: params.id,
-  //   name: "paypal",
-  //   balance: 1200,
-  // };
 
   const schedulePayments = [
     {
@@ -58,30 +53,6 @@ export async function loader({ params }: Route.LoaderArgs) {
   // );
 
   return { ...account, transactions, schedulePayments };
-}
-
-function CreateTransaction({ accountId }: { accountId: string }) {
-  let fetcher = useFetcher();
-
-  return (
-    <Dialog>
-      <DialogTrigger className="">Add</DialogTrigger>
-
-      <DialogContent>
-        <fetcher.Form action="/api/transactions/create" method="post">
-          <Input name="title" label="title" type="text" />
-
-          <Input name="amount" label="amount" type="text" />
-
-          <input type="hidden" name="account" value={accountId} />
-
-          <button type="submit" disabled={fetcher.state != "idle"}>
-            Create
-          </button>
-        </fetcher.Form>
-      </DialogContent>
-    </Dialog>
-  );
 }
 
 export default function AccountPage({ loaderData }: Route.ComponentProps) {
