@@ -1,7 +1,7 @@
 import { SignedIn, SignedOut } from "@clerk/react-router";
 import { getAuth } from "@clerk/react-router/ssr.server";
 import { Navigate, NavLink, Outlet, redirect } from "react-router";
-import UserButton from "~/components/UserButton";
+import { UserButton } from "@clerk/react-router";
 import type { Route } from "./+types/layout";
 
 export async function loader(args: Route.LoaderArgs) {
@@ -178,7 +178,22 @@ export default function DashboardLayout() {
         </div>
 
         <div className="w-full px-1">
-          <UserButton />
+          <UserButton
+            showName
+            appearance={{
+              elements: {
+                button: {
+                  base: {
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyItems: "between",
+                    width: "100%",
+                    backgroundColor: "black",
+                  },
+                },
+              },
+            }}
+          />
         </div>
       </header>
 
