@@ -12,6 +12,11 @@ type Transactions = {
 
 const columns: ColumnDef<Transactions>[] = [
   {
+    header: "id",
+    accessorKey: "id",
+    enableHiding: true,
+  },
+  {
     header: "Title",
     accessorKey: "title",
   },
