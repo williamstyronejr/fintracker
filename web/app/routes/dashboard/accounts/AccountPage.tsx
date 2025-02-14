@@ -9,15 +9,19 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@radix-ui/react-dropdown-menu";
-import { Link } from "react-router";
+import { Form, Link, useFetcher } from "react-router";
 import CogWheel from "~/components/icons/CogWheel";
+import { db } from "~/lib/db";
+import { Accounts, Transactions } from "~/lib/schema";
+import { eq } from "drizzle-orm";
+import { Dialog, DialogContent, DialogTrigger } from "~/components/ui/dialog";
+import Input from "~/components/Input";
+import CreateTransaction from "~/components/CreateTransaction";
 
 export async function loader({ params }: Route.LoaderArgs) {
-  const account = {
-    id: params.id,
-    name: "paypal",
-    balance: 1200,
-  };
+  const account = await db.query.Accounts.findFirst({
+    where: eq(Accounts.id, params.id),
+  });
 
   const schedulePayments = [
     {
@@ -29,29 +33,39 @@ export async function loader({ params }: Route.LoaderArgs) {
     },
   ];
 
-  const transactions = new Promise<any[]>((res) =>
-    setTimeout(() => {
-      res([
-        {
-          id: "123",
-          amount: "123",
-          title: "UberEats",
-          date: new Date(),
-        },
-      ]);
-    }, 5000)
-  );
+  const transactions = db
+    .select()
+    .from(Transactions)
+    .where(eq(Transactions.accountId, params.id))
+    .execute();
+
+  // const transactions = new Promise<any[]>((res) =>
+  //   setTimeout(() => {
+  //     res([
+  //       {
+  //         id: "123",
+  //         amount: "123",
+  //         title: "UberEats",
+  //         date: new Date(),
+  //       },
+  //     ]);
+  //   }, 5000)
+  // );
 
   return { ...account, transactions, schedulePayments };
 }
 
 export default function AccountPage({ loaderData }: Route.ComponentProps) {
-  const { name, id, balance, transactions, schedulePayments } = loaderData;
+  const { title, id, nickname, balance, transactions, schedulePayments } =
+    loaderData;
 
   return (
     <div>
       <div className="py-4 flex flex-row flex-nowrap justify-between">
-        <h3 className="font-semibold text-3xl">{name}</h3>
+        <div>
+          <h3 className="font-semibold text-3xl">{nickname}</h3>
+          <h6 className="text-sm  py-1 text-slate-500">{title}</h6>
+        </div>
 
         <DropdownMenu>
           <DropdownMenuTrigger>
@@ -71,12 +85,14 @@ export default function AccountPage({ loaderData }: Route.ComponentProps) {
 
       <div className="flex flex-col md:flex-row flex-nowrap gap-4">
         <div className="grow">
-          <div>
+          <div className="flex flex-row flex-nowrap justify-between">
             <h3 className="font-medium text-xl pb-4">Transactions</h3>
+
+            <CreateTransaction accountId={id as string} />
           </div>
 
           <Suspense fallback={<TransactionTableFallback />}>
-            <TransactionTable data={transactions} />
+            <TransactionTable data={transactions} accountId={id} />
           </Suspense>
         </div>
 

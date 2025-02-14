@@ -7,19 +7,24 @@ type Transactions = {
   id: string;
   title: string;
   amount: number;
-  date: Date;
+  createdAt: Date;
 };
 
 const columns: ColumnDef<Transactions>[] = [
+  {
+    header: "id",
+    accessorKey: "id",
+    enableHiding: true,
+  },
   {
     header: "Title",
     accessorKey: "title",
   },
   {
     header: "Date",
-    accessorKey: "date",
-    accessorFn: ({ date }) =>
-      date.toLocaleDateString("en-US", {
+    accessorKey: "createdAt",
+    accessorFn: ({ createdAt }) =>
+      createdAt.toLocaleDateString("en-US", {
         day: "2-digit",
         year: "numeric",
         month: "short",
@@ -36,7 +41,13 @@ export function TransactionTableFallback() {
   return <div>loading....</div>;
 }
 
-export default function TransactionTable({ data }: { data: Promise<any[]> }) {
+export default function TransactionTable({
+  data,
+  accountId,
+}: {
+  data: Promise<any[]>;
+  accountId?: string;
+}) {
   const initialTransactions = use(data);
 
   return (

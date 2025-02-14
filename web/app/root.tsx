@@ -6,9 +6,13 @@ import {
   Scripts,
   ScrollRestoration,
 } from "react-router";
+import { rootAuthLoader } from "@clerk/react-router/ssr.server";
+import { ClerkProvider } from "@clerk/react-router";
 
 import type { Route } from "./+types/root";
 import stylesheet from "./app.css?url";
+import { NotificationProvider } from "./hooks/NotificationContext";
+import NotificationsManager from "./components/NotificationsManager";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -23,6 +27,10 @@ export const links: Route.LinksFunction = () => [
   },
   { rel: "stylesheet", href: stylesheet },
 ];
+
+export async function loader(args: Route.LoaderArgs) {
+  return rootAuthLoader(args);
+}
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -42,8 +50,19 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function App() {
-  return <Outlet />;
+export default function App({ loaderData }: Route.ComponentProps) {
+  return (
+    <ClerkProvider
+      loaderData={loaderData}
+      signUpFallbackRedirectUrl="/dashboard"
+      signInFallbackRedirectUrl="/dashboard"
+    >
+      <NotificationProvider>
+        <NotificationsManager />
+        <Outlet />
+      </NotificationProvider>
+    </ClerkProvider>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
