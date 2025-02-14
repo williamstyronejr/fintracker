@@ -18,15 +18,19 @@ export default [
 
   ...prefix("api", [
     ...prefix("account", [
-      route("/:id/delete", "routes/api/account/delete.ts"),
       route("create", "routes/api/account/create.ts"),
-      route(
-        "/:id/transactions/delete",
-        "routes/api/account/delete-transactions.ts"
-      ),
-      route("/:id/export", "routes/api/account/data.ts"),
-      route("/:id/share", "routes/api/account/shareable.ts"),
-      route("/:id/edit", "routes/api/account/edit.ts"),
+      route("list", "routes/api/account/list.ts"),
+
+      ...prefix(":id", [
+        route("delete", "routes/api/account/delete.ts"),
+        route("export", "routes/api/account/data.ts"),
+        route("share", "routes/api/account/shareable.ts"),
+        route("edit", "routes/api/account/edit.ts"),
+        route(
+          "transactions/delete",
+          "routes/api/account/delete-transactions.ts"
+        ),
+      ]),
     ]),
 
     route("/transactions/create", "routes/api/transactions/create.tsx"),
