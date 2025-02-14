@@ -11,7 +11,11 @@ import {
   SelectItem,
 } from "./ui/select";
 
-function AccountSelector() {
+/**
+ * If account id is provided, selector will be disabled.
+ * @param accountId Id of account default selected account.
+ */
+function AccountSelector({ accountId }: { accountId?: string }) {
   const fetcher = useFetcher();
 
   useEffect(() => {
@@ -19,7 +23,7 @@ function AccountSelector() {
   }, []);
 
   return (
-    <Select name="account">
+    <Select name="account" disabled={!!accountId} defaultValue={accountId}>
       <SelectTrigger>
         <SelectValue placeholder="Select account" />
       </SelectTrigger>
@@ -64,7 +68,7 @@ export default function CreateTransaction({
 
           <input type="hidden" name="account" value={accountId} />
 
-          <AccountSelector />
+          <AccountSelector accountId={accountId} />
 
           <button type="submit" disabled={fetcher.state != "idle"}>
             Create
