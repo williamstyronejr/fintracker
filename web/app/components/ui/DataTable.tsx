@@ -27,6 +27,7 @@ export function DataTable<TData, TValue>({
   data,
 }: DataTableProps<TData, TValue>) {
   const navigate = useNavigate();
+
   const table = useReactTable({
     data,
     columns,
@@ -61,7 +62,9 @@ export function DataTable<TData, TValue>({
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}
-                onClick={() => navigate(`/dashboard/transactions/${row.id}`)}
+                onClick={() =>
+                  navigate(`/dashboard/transactions/${row.getValue("id")}`)
+                }
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
