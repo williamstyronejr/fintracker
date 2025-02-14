@@ -9,8 +9,6 @@ import {
 } from "@radix-ui/react-dropdown-menu";
 import CogWheel from "~/components/icons/CogWheel";
 import Trash from "~/components/icons/Trash";
-// import Edit from "~/components/icons/Edit";
-// import ConfirmButton from "~/components/ConfirmButton";
 import { data, Link, useFetcher } from "react-router";
 import { eq } from "drizzle-orm";
 import { Transactions } from "~/lib/schema";
