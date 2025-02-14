@@ -9,6 +9,7 @@ import TransactionTable, {
 } from "~/components/TransactionTable";
 
 import type { Route } from "./+types/TransactionsPage";
+import CreateTransaction from "~/components/CreateTransaction";
 
 export async function loader(args: Route.LoaderArgs) {
   const user = await getAuth(args);
@@ -35,8 +36,10 @@ export default function TransactionsPage({ loaderData }: Route.ComponentProps) {
 
   return (
     <div>
-      <header>
+      <header className="flex flex-row flex-nowrap justify-between ">
         <h3>Transaction History</h3>
+
+        <CreateTransaction />
       </header>
 
       <div>
