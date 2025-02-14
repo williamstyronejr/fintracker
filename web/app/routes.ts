@@ -34,6 +34,8 @@ export default [
     route("/transactions/:id/delete", "routes/api/transactions/delete.ts"),
   ]),
 
+  route("/a/:id", "routes/public/PublicAccountPage.tsx"),
+
   route("dashboard", "routes/dashboard/layout.tsx", [
     index("routes/dashboard/index.tsx"),
     route("settings", "routes/dashboard/settings/SettingsPage.tsx"),
