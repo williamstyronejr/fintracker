@@ -1,52 +1,49 @@
-import type { ColumnDef } from "@tanstack/react-table";
-import { DataTable } from "~/components/ui/DataTable";
-import { formatCost } from "~/util";
+import { getAuth } from "@clerk/react-router/ssr.server";
+import { Suspense } from "react";
+import { redirect } from "react-router";
+import { eq } from "drizzle-orm";
+import { db } from "~/lib/db";
+import { Transactions } from "~/lib/schema";
+import TransactionTable, {
+  TransactionTableFallback,
+} from "~/components/TransactionTable";
 
-type Transactions = {
-  id: string;
-  title: string;
-  amount: number;
-  date: Date;
-};
+import type { Route } from "./+types/TransactionsPage";
 
-const columns: ColumnDef<Transactions>[] = [
-  {
-    header: "Title",
-    accessorKey: "title",
-  },
-  {
-    header: "Date",
-    accessorKey: "date",
-    accessorFn: ({ date }) =>
-      date.toLocaleDateString("en-US", {
-        day: "2-digit",
-        year: "numeric",
-        month: "short",
-      }),
-  },
-  {
-    header: "Amount",
-    accessorKey: "amount",
-    accessorFn: (row) => formatCost(row.amount),
-  },
-];
+export async function loader(args: Route.LoaderArgs) {
+  const user = await getAuth(args);
 
-export default function TransactionsPage() {
-  const data = [
-    {
-      id: "123",
-      title: "UberEats",
-      amount: 22,
-      date: new Date(),
-    },
-  ];
+  if (!user.userId) return redirect("/signin");
+
+  try {
+    const transactions = db
+      .select()
+      .from(Transactions)
+      .where(eq(Transactions.userId, user.userId))
+      .execute();
+
+    return {
+      transactions,
+    };
+  } catch (err) {
+    throw new Response("Error", { status: 500 });
+  }
+}
+
+export default function TransactionsPage({ loaderData }: Route.ComponentProps) {
+  const { transactions } = loaderData;
 
   return (
     <div>
       <header>
         <h3>Transaction History</h3>
       </header>
-      <DataTable columns={columns} data={data} />
+
+      <div>
+        <Suspense fallback={<TransactionTableFallback />}>
+          <TransactionTable data={transactions} accountId={""} />
+        </Suspense>
+      </div>
     </div>
   );
 }
