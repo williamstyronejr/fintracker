@@ -21,9 +21,6 @@ export default function ConfirmationButton({
     if (fetcher.data) setVisible(false);
   }, [fetcher.data]);
 
-  console.log(action);
-  console.log(fetcher.state);
-
   return (
     <Dialog open={visible} onOpenChange={() => setVisible((old) => !old)}>
       <button type="button" onClick={() => setVisible((old) => !old)}>
