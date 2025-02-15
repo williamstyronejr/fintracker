@@ -10,6 +10,7 @@ import {
   SelectContent,
   SelectItem,
 } from "./ui/select";
+import MoneyInput from "./MoneyInput";
 
 /**
  * If account id is provided, selector will be disabled.
@@ -64,7 +65,7 @@ export default function CreateTransaction({
         <fetcher.Form action="/api/transactions/create" method="post">
           <Input name="title" label="title" type="text" />
 
-          <Input name="amount" label="amount" type="text" />
+          <MoneyInput name="amount" />
 
           <input type="hidden" name="account" value={accountId} />
 
